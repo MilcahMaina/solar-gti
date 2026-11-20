@@ -41,15 +41,30 @@ World Bank / ESMAP solar measurement campaign, Narok, Kenya: file `solar-measure
 
 **Excluded to prevent leakage:** DHI, both GHI sensors, `gti_soil` and `gti_monthly`. They measure almost the same quantity as the target at the same moment.
 
-## How to reproduce
-
-1. Download the file above and save it as `data/raw/narok_2019.csv`.
-2. Run:
+**1. Get the code**
 
 ```bash
-docker compose run --rm --build train   # pipeline + training, writes models/ and metrics
-docker compose up --build api           # API at http://localhost:8000
+git clone https://github.com/MilcahMaina/solar-gti.git
+cd solar-gti
 ```
+
+**2. Start Docker Desktop** and wait until it shows *Engine running*.
+
+**3. Rebuild the data and retrain the models** (
+
+```bash
+docker compose run --rm --build train
+```
+
+This runs `src/pipeline.py`, which turns the raw minute CSV into `data/processed/hourly.csv`, and then `src/train.py`, which trains all the models, prints the results table and saves the served model and `metrics.csv` to `models/`.
+
+**4. Start the API**
+
+```bash
+docker compose up --build api
+```
+
+Open http://localhost:8000, enter weather values and click *Estimate irradiance*. The interactive API docs are at http://localhost:8000/docs. Press `Ctrl+C` to stop.
 
 Without Docker (Python 3.12):
 
