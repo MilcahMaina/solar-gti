@@ -24,7 +24,7 @@ flowchart LR
 
 ```
 Dockerfile, docker-compose.yml, requirements.txt
-data/raw/narok_2019.csv        <- put the downloaded file here (not committed)
+data/raw/narok_2019.csv        <- raw dataset (included in the repository)
 data/processed/hourly.csv      <- written by pipeline.py
 models/                        <- served model, model_info.json, metrics.csv
 src/config.py                  <- paths, column names, split date, feature lists
