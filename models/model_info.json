@@ -1,0 +1,13 @@
+{
+  "model": "XGBoost",
+  "features": [
+    "temperature",
+    "humidity",
+    "pressure",
+    "precipitation",
+    "wind_speed",
+    "wind_direction",
+    "hour",
+    "day_of_year"
+  ]
+}

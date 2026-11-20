@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Narok GTI predictor</title>
+<style>
+  :root { --bg:#eef3f6; --panel:#ffffff; --ink:#18324a; --muted:#5b7085; --sun:#c98a0b; --line:#cdd8e1; color-scheme: light; }
+  @media (prefers-color-scheme: dark) {
+    :root { --bg:#0f1c28; --panel:#172836; --ink:#e4edf3; --muted:#9db0c0; --sun:#f0b43c; --line:#2b4256; color-scheme: dark; }
+  }
+  * { box-sizing: border-box; }
+  body { margin:0; background:var(--bg); color:var(--ink); font:16px/1.5 "Segoe UI", system-ui, sans-serif; }
+  main { max-width:640px; margin:0 auto; padding:2.5rem 1.25rem; }
+  h1 { font-size:1.6rem; margin:0 0 .25rem; }
+  p.lead { color:var(--muted); margin:0 0 1.75rem; }
+  form { background:var(--panel); border:1px solid var(--line); border-radius:10px; padding:1.25rem;
+         display:grid; grid-template-columns:repeat(auto-fit, minmax(170px, 1fr)); gap:1rem; }
+  label { display:flex; flex-direction:column; font-size:.9rem; color:var(--muted); gap:.3rem; }
+  input { font:inherit; color:var(--ink); background:transparent; border:1px solid var(--line);
+          border-radius:6px; padding:.5rem .6rem; }
+  input:focus-visible, button:focus-visible { outline:2px solid var(--sun); outline-offset:2px; }
+  .wide { grid-column:1 / -1; }
+  button { grid-column:1 / -1; font:inherit; font-weight:600; padding:.7rem; border:0; border-radius:6px;
+           background:var(--ink); color:var(--bg); cursor:pointer; }
+  #result { margin-top:2rem; min-height:5rem; }
+  #value { font-size:3.5rem; font-weight:700; color:var(--sun); line-height:1; }
+  #note { color:var(--muted); }
+</style>
+</head>
+<body>
+<main>
+  <h1>Hourly solar irradiance on a tilted panel</h1>
+  <p class="lead">Enter the weather for one hour at the Narok site to estimate Global Tilted Irradiance.</p>
+  <form id="f">
+    <label class="wide">Hour starting <input name="time" type="datetime-local" step="3600" value="2019-11-15T12:00" required></label>
+    <label>Temperature (°C) <input name="temperature" type="number" step="any" value="24" required></label>
+    <label>Humidity (%) <input name="humidity" type="number" step="any" min="0" max="100" value="45" required></label>
+    <label>Pressure (hPa) <input name="pressure" type="number" step="any" value="810" required></label>
+    <label>Rain in the hour (mm) <input name="precipitation" type="number" step="any" min="0" value="0" required></label>
+    <label>Wind speed (m/s) <input name="wind_speed" type="number" step="any" min="0" value="3" required></label>
+    <label>Wind direction (°) <input name="wind_direction" type="number" step="any" min="0" max="360" value="90" required></label>
+    <button type="submit">Estimate irradiance</button>
+  </form>
+  <div id="result" aria-live="polite"><div id="value"></div><div id="note"></div></div>
+</main>
+<script>
+document.getElementById("f").addEventListener("submit", async (e) => {
+  e.preventDefault();
+  const data = Object.fromEntries(new FormData(e.target));
+  for (const k in data) if (k !== "time") data[k] = Number(data[k]);
+  const note = document.getElementById("note"), value = document.getElementById("value");
+  try {
+    const r = await fetch("/predict", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(data) });
+    const out = await r.json();
+    if (!r.ok) throw new Error(JSON.stringify(out.detail));
+    value.textContent = out.gti_wm2 + " W/m²";
+    note.textContent = "Estimated by the " + out.model + " model.";
+  } catch (err) {
+    value.textContent = "";
+    note.textContent = "Couldn’t get an estimate: " + err.message;
+  }
+});
+</script>
+</body>
+</html>

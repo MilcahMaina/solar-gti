@@ -1,0 +1,12 @@
+features,model,MAE,RMSE,R2,MAE_day,RMSE_day,R2_day
+baseline,Persistence (t-24h),52.041,115.322,0.88,104.559,163.726,0.743
+weather,LinearRegression,147.887,194.974,0.657,165.769,212.521,0.567
+weather,RandomForest,44.803,96.598,0.916,87.765,136.09,0.823
+weather,GradientBoosting,57.778,105.82,0.899,102.472,146.72,0.794
+weather,XGBoost,46.183,94.313,0.92,88.077,133.081,0.83
+weather,MLP,117.623,170.206,0.739,205.04,234.836,0.472
+weather+lags,LinearRegression,44.91,77.267,0.946,74.755,107.108,0.89
+weather+lags,RandomForest,31.094,71.462,0.954,62.151,101.454,0.901
+weather+lags,GradientBoosting,34.218,73.43,0.951,66.544,104.088,0.896
+weather+lags,XGBoost,34.462,74.08,0.95,66.941,105.006,0.894
+weather+lags,MLP,39.263,76.199,0.948,76.241,107.97,0.888
